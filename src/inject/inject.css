@@ -1,0 +1,36 @@
+.gph-container {
+  display: flex;
+}
+
+.gph-prestige, .gph-rank {
+  display: flex !important;
+  align-items: center !important;
+  transform: scale(0.75);
+}
+
+.gph-rank {
+  margin-left: 10px !important;
+}
+
+.gph-winrate {
+  font-size: 22px !important;
+  font-family: GWENT,sans-serif !important;
+  min-height: unset !important;
+  background: unset !important;
+  box-shadow: unset !important;
+  margin-bottom: 0 !important;
+  line-height: 28px !important;
+}
+.gph-winrate-large {
+  font-weight: 400 !important;
+  font-size: 28px !important;
+  margin-left: 18px !important;
+}
+
+.gph-link {
+  transition: unset !important;
+  color: inherit !important;
+}
+.gph-link:hover {
+  text-decoration: underline !important;
+}
