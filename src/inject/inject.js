@@ -81,9 +81,7 @@ function showMyWinrate() {
 	elem.appendChild(winrateSpan);
 }
 
-async function main() {
-	showMyWinrate();
-
+async function showOpponentStats() {
 	for(let elem of document.querySelectorAll('#history > table > tbody > tr > td:nth-child(4)')) {
 		const nick = elem.textContent.trim();
 		const nameNode = Array.from(elem.childNodes).filter(node => node.nodeType === Node.TEXT_NODE)[0];
@@ -129,6 +127,25 @@ async function main() {
 
 		elem.appendChild(container);
 	}
+}
+
+function setNextPageListener() {
+	const table = document.getElementById('history');
+	if(!table) return;
+
+	const observer = new MutationObserver(() => {
+		console.log('Updating table...');
+		showOpponentStats();
+	});
+	observer.observe(table, {
+		childList: true,
+	});
+}
+
+async function main() {
+	showMyWinrate();
+	setNextPageListener();
+	await showOpponentStats();
 }
 
 // noinspection JSIgnoredPromiseFromCall
