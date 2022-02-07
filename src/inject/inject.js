@@ -19,11 +19,14 @@ function sleep(timeMs) {
 }
 
 function loadCachedStats(nick) {
-	const res = window.localStorage.getItem(PREFIX + nick);
-	if(res && +Date.now() - res['timestamp'] <= CACHE_LIFETIME) return res['stats'];
+	let res = window.localStorage.getItem(PREFIX + nick);
+	if(!res) return null;
+	res = JSON.parse(res);
+	if(+Date.now() - res['timestamp'] <= CACHE_LIFETIME) return res['stats'];
 }
 function saveCachedStats(nick, stats) {
-	window.localStorage.setItem(PREFIX + nick, stats);
+	const res = {stats, timestamp: +Date.now()};
+	window.localStorage.setItem(PREFIX + nick, JSON.stringify(res));
 }
 
 function extractPlayerStats(html) {
@@ -41,9 +44,12 @@ function extractPlayerStats(html) {
 }
 
 async function getPlayerStats(nick) {
-	/*const cachedStats = loadCachedStats(nick);
-	if(cachedStats) return cachedStats;*/
+	const cachedStats = loadCachedStats(nick);
+	if(cachedStats) return cachedStats;
+
+	await sleep(10);
 	console.log(`${PREFIX} Loading player stats: ${nick}`);
+
 	const response = await fetch(getPlayerUrl(nick));
 	const page = await response.text();
 	const domParser = new DOMParser();
@@ -51,7 +57,7 @@ async function getPlayerStats(nick) {
 
 	const stats = extractPlayerStats(html);
 	console.log(`${PREFIX} Result: ${JSON.stringify(stats)}`);
-	// saveCachedStats(nick, stats);
+	if(stats) saveCachedStats(nick, stats);
 	return stats;
 }
 
@@ -108,7 +114,6 @@ async function main() {
 		container.appendChild(winrateSpan);
 
 		elem.appendChild(container);
-		// await sleep(1);
 	}
 }
 
