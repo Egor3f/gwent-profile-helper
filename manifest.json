@@ -1,12 +1,13 @@
 {
   "name": "Gwent Profile Helper",
-  "version": "1.0",
+  "version": "1.1",
   "manifest_version": 3,
   "description": "Show opponent's stats in Match History",
   "homepage_url": "https://github.com/Egor3f/gwent-profile-helper",
   "icons": {
     "16": "icons/icon16.png",
-    "48": "icons/icon48.png"
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
   },
   "content_scripts": [
     {
