@@ -9,7 +9,7 @@
 }
 
 .gph-rank {
-  margin-left: 10px !important;
+  margin-left: 0 !important;
 }
 
 .gph-winrate {
@@ -20,11 +20,23 @@
   box-shadow: unset !important;
   margin-bottom: 0 !important;
   line-height: 28px !important;
+  min-width: 120px;
 }
 .gph-winrate-large {
   font-weight: 400 !important;
   font-size: 28px !important;
   margin-left: 18px !important;
+}
+
+.gph-mmr {
+  font-size: 22px;
+  font-weight: 400;
+  font-family: GWENT,sans-serif;
+  line-height: 28px;
+
+  flex: 0 1 50px;
+  margin-left: 5px;
+  padding: 20px 0;
 }
 
 .gph-link {

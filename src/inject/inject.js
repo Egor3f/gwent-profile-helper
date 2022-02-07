@@ -10,8 +10,8 @@ function getPlayerUrl(nick) {
 }
 
 function parseNumber(element) {
-	const res = /\d+/.exec(element.textContent);
-	return res ? parseInt(res[0]) : null;
+	const res = /[\d, ]+/.exec(element.textContent);
+	return res ? parseInt(res[0].replace(/[^\d]/, '')) : null;
 }
 
 function sleep(timeMs) {
@@ -34,12 +34,16 @@ function extractPlayerStats(html) {
 	const losesElement = html.querySelector('table.c-statistics-table.current-ranked > tbody > tr:nth-child(3) > td:nth-child(2)');
 	const prestigeElement = html.querySelector('span.l-player-details__prestige > strong');
 	const rankElement = html.querySelector('span.l-player-details__rank > strong');
+	const mmrElement = html.querySelector('div.l-player-details__table-mmr > strong');
+	const positionElement = html.querySelector('div.l-player-details__table-position > strong');
 	if(!winsElement || !losesElement || !prestigeElement || !rankElement) return null;
 	return {
 		wins: parseNumber(winsElement),
 		loses: parseNumber(losesElement),
 		prestige: parseNumber(prestigeElement),
 		rank: parseNumber(rankElement),
+		mmr: mmrElement ? parseNumber(mmrElement) : null,
+		position: positionElement ? parseNumber(positionElement) : null,
 	};
 }
 
@@ -70,7 +74,7 @@ function showMyWinrate() {
 	const winrate = (stats.wins / (stats.wins + stats.loses) * 100).toFixed(2);
 	winrateSpan.innerHTML = `${winrate} %`;
 	winrateSpan.className = 'l-player-details gph-winrate gph-winrate-large';
-	winrateSpan.title = 'Current Ranked Season Winrate (added by helper extension)';
+	winrateSpan.title = `Current Ranked Season Winrate (added by helper extension).  Wins: ${stats.wins}   Losses: ${stats.loses}`;
 	elem.appendChild(winrateSpan);
 }
 
@@ -112,6 +116,12 @@ async function main() {
 		winrateSpan.className = 'l-player-details gph-winrate';
 		winrateSpan.title = `Wins: ${stats.wins}   Losses: ${stats.loses}`;
 		container.appendChild(winrateSpan);
+
+		const mmrSpan = document.createElement('span');
+		mmrSpan.innerHTML = stats.mmr || '';
+		mmrSpan.className = 'gph-mmr';
+		if(stats.position) mmrSpan.title = `MMR: ${stats.mmr}   Position: ${stats.position}`;
+		container.appendChild(mmrSpan);
 
 		elem.appendChild(container);
 	}
