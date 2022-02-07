@@ -10,7 +10,7 @@ function getPlayerUrl(nick) {
 }
 
 function parseNumber(element) {
-	const res = /[\d, ]+/.exec(element.textContent);
+	const res = /[\d,\s]+/.exec(element.textContent);
 	return res ? parseInt(res[0].replace(/[^\d]/, '')) : null;
 }
 
@@ -32,16 +32,19 @@ function saveCachedStats(nick, stats) {
 function extractPlayerStats(html) {
 	const winsElement = html.querySelector('table.c-statistics-table.current-ranked > tbody > tr:nth-child(2) > td:nth-child(2)');
 	const losesElement = html.querySelector('table.c-statistics-table.current-ranked > tbody > tr:nth-child(3) > td:nth-child(2)');
-	const prestigeElement = html.querySelector('span.l-player-details__prestige > strong');
+	const prestigeElement = html.querySelector('span.l-player-details__prestige');
+	const levelElement = prestigeElement.querySelector('strong');
 	const rankElement = html.querySelector('span.l-player-details__rank > strong');
 	const mmrElement = html.querySelector('div.l-player-details__table-mmr > strong');
 	const positionElement = html.querySelector('div.l-player-details__table-position > strong');
-	if(!winsElement || !losesElement || !prestigeElement || !rankElement) return null;
+	if(!winsElement || !losesElement || !prestigeElement || !levelElement || !rankElement) return null;
+	const prestige = /l-player-details__prestige--(\d{1,2})/.exec(prestigeElement.className);
 	return {
 		wins: parseNumber(winsElement),
 		loses: parseNumber(losesElement),
-		prestige: parseNumber(prestigeElement),
+		level: parseNumber(levelElement),
 		rank: parseNumber(rankElement),
+		prestige: prestige ? prestige[1] : 0,
 		mmr: mmrElement ? parseNumber(mmrElement) : null,
 		position: positionElement ? parseNumber(positionElement) : null,
 	};
@@ -101,8 +104,9 @@ async function main() {
 		container.className = 'gph-container';
 
 		const prestigeSpan = document.createElement('span');
-		prestigeSpan.innerHTML = `<strong>${stats.prestige}</strong>`;
-		prestigeSpan.className = 'l-player-details__prestige l-player-details__prestige--0 gph-prestige';
+		prestigeSpan.innerHTML = `<strong>${stats.level}</strong>`;
+		prestigeSpan.className = `l-player-details__prestige l-player-details__prestige--${stats.prestige} gph-prestige`;
+		prestigeSpan.title = `Prestige: ${stats.prestige}`;
 		container.appendChild(prestigeSpan);
 
 		const rankSpan = document.createElement('span');
